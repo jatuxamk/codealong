@@ -41,7 +41,7 @@ function App() {
 
   return (
     <div>
-      <nav className="navbar navbar-light bg-light">
+      <nav className="navbar navbar-light bg-light mb-3">
         <div className="container">
           <span className="navbar-brand mb-0 h1">
             Käyttäjärekisteri
@@ -52,12 +52,31 @@ function App() {
 
       <div className="container">
 
+      <i className="bi bi-alarm"></i>
+
         {(data.virhe)
           ? <div className="alert alert-danger">
               {data.virhe}
             </div> 
           : (data.tiedotHaettu)
-            ? JSON.stringify(data.kayttajat)
+            ? <table className="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Nimi</th>
+                    <th>Käyttäjätunnus</th>
+                    <th>Sähköposti</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.kayttajat.map((kayttaja) => {
+                    return <tr key={kayttaja.id}>
+                              <td>{kayttaja.sukunimi}, {kayttaja.etunimi}</td>
+                              <td>{kayttaja.sahkoposti}</td>
+                              <td>{kayttaja.kayttajatunnus}</td>
+                           </tr>
+                  })}                  
+                </tbody>
+              </table>
             : <div className="spinner-border" role="status">
                 <span className="sr-only">Odota hetki...</span>
               </div>
