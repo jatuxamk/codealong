@@ -7,14 +7,7 @@ function App() {
   const [naytaModal, setNaytaModal] = useState(false);
   const [modalOtsikko, setModalOtsikko] = useState(false);
 
-  const [kayttaja, setKayttaja] = useState({
-                                              id: 0,
-                                              sukunimi : "",
-                                              etunimi : "",
-                                              sahkoposti : "",
-                                              kayttajatunnus : "",
-                                              salasana : ""
-                                           });
+  const [kayttaja, setKayttaja] = useState({});
 
   const [data, setData] = useState({
                                       kayttajat : [],
@@ -24,6 +17,15 @@ function App() {
 
   const lisaysDialogi = () => {
 
+    setKayttaja({
+                  id: 0,
+                  sukunimi : "",
+                  etunimi : "",
+                  sahkoposti : "",
+                  kayttajatunnus : "",
+                  salasana : ""
+              });
+              
     setToiminto("POST");
     setModalOtsikko("Lisää uusi käyttäjä");
     setNaytaModal(true);
