@@ -30,16 +30,18 @@ function App() {
 
   }
 
-  const muokkausDialogi = () => {
+  const muokkausDialogi = (muokattavaKayttaja) => {
 
+    setKayttaja(muokattavaKayttaja);
     setToiminto("PUT");
     setModalOtsikko("Muokkaa käyttäjän tietoja");
     setNaytaModal(true);
 
   }
 
-  const poistoDialogi = () => {
+  const poistoDialogi = (poistettavaKayttaja) => {
 
+    setKayttaja(poistettavaKayttaja);
     setToiminto("DELETE");
     setModalOtsikko("Poista käyttäjän tiedot");
     setNaytaModal(true);
@@ -52,11 +54,50 @@ function App() {
 
   }
 
-  const haeTiedot = async () => {
+  const apikutsu = async () => {
+
+    let url = "http://localhost:4000/api/kayttajat";
+    let asetukset = {};
+    
+    if (toiminto === "POST") {
+
+      asetukset = {
+                    method : "POST",
+                    headers : {
+                                "Content-Type" : "application/json"
+                              },
+                    body : JSON.stringify(kayttaja)
+                  }
+
+    }
+
+    if (toiminto === "PUT") {
+
+      url = `http://localhost:4000/api/kayttajat/${kayttaja.id}`;
+
+      asetukset = {
+                    method : "PUT",
+                    headers : {
+                        "Content-Type" : "application/json"
+                      },
+                    body : JSON.stringify(kayttaja)
+                  }
+
+    }  
+
+    if (toiminto === "DELETE") {
+
+      url = `http://localhost:4000/api/kayttajat/${kayttaja.id}`;
+
+      asetukset = {
+                    method : "DELETE"
+                  }
+
+    }   
 
     try {
 
-      const yhteys = await fetch("http://localhost:4000/api/kayttajat");
+      const yhteys = await fetch(url, asetukset);
       const tiedot = await yhteys.json();
 
       setData({
@@ -75,11 +116,13 @@ function App() {
 
     }
 
+    setToiminto("GET");
+
   }
 
   useEffect(() => {
 
-    haeTiedot();
+    apikutsu();
 
   }, [] );
 
@@ -124,7 +167,7 @@ function App() {
                               <td>
                                   <button 
                                     className="btn btn-link"
-                                    onClick={muokkausDialogi}
+                                    onClick={() => { muokkausDialogi(kayttaja) }}
                                   >
                                     <i class="bi bi-pencil-square"></i>
                                   </button>
@@ -132,7 +175,7 @@ function App() {
                               <td>
                                   <button 
                                     className="btn btn-link"
-                                    onClick={poistoDialogi}
+                                    onClick={() => { poistoDialogi(kayttaja) }}
                                   >
                                     <i class="bi bi-trash"></i>
                                   </button>
@@ -157,7 +200,7 @@ function App() {
           
           {(toiminto === "DELETE")
             ? <div className="alert alert-danger">
-                Haluatko varmasti poistaa käyttäjän?
+                Haluatko varmasti poistaa käyttäjän {kayttaja.sukunimi}, {kayttaja.etunimi} (ID: {kayttaja.id})?
               </div>
             : <form>
 
@@ -251,7 +294,13 @@ function App() {
 
         </Modal.Body>
         <Modal.Footer>
-          <button className="btn btn-outline-primary">
+          <button 
+            className="btn btn-outline-primary"
+            onClick={() => {
+                      apikutsu();
+                      suljeModal();
+                    }}
+          >
             Ok
           </button>
           <button 
